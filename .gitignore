@@ -1,0 +1,15 @@
+# Compiled executables
+*.out
+*.exe
+Preblem_*
+Problem_*
+
+# Object files
+*.o
+
+# Temporary files
+*.tmp
+*~
+
+# VS Code
+.vscode/

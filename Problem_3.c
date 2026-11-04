@@ -19,13 +19,14 @@ P0 receives 100 from P3
 Ring communication completed.
 */
 
+
 #include <stdio.h>
 #include <mpi.h>
 
 int main(int argc, char *argv[])
 {
     int rank, size;
-    int value = 100, received;
+    int value, received;
     int next, previous;
     double start, end;
 
@@ -39,20 +40,35 @@ int main(int argc, char *argv[])
     start = MPI_Wtime();
 
     if (rank == 0)
+    {
         value = 100;
 
-    MPI_Sendrecv(&value, 1, MPI_INT, next, 0,
-                 &received, 1, MPI_INT, previous, 0,
+        MPI_Send(&value, 1, MPI_INT, next, 0, MPI_COMM_WORLD);
+        MPI_Recv(&received, 1, MPI_INT, previous, 0,
                  MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        printf("P0 sends %d to P%d\n", value, next);
+        printf("P0 receives %d from P%d\n", received, previous);
+    }
+    else
+    {
+        MPI_Recv(&received, 1, MPI_INT, previous, 0,
+                 MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        printf("P%d receives %d from P%d\n", rank, received, previous);
+
+        MPI_Send(&received, 1, MPI_INT, next, 0, MPI_COMM_WORLD);
+
+        printf("P%d sends %d to P%d\n", rank, received, next);
+    }
 
     end = MPI_Wtime();
 
-    printf("P%d: Sent %d to P%d, Received %d from P%d\n",
-           rank, value, next, received, previous);
-
     if (rank == 0)
+    {
         printf("Ring communication completed.\n");
         printf("Communication time = %f seconds\n", end - start);
+    }
 
     MPI_Finalize();
     return 0;

@@ -1,5 +1,5 @@
 /*
-Problem_17: Each MPI process generates data intended for every other process. Implement the communication using MPI_Alltoall and analyze its communication cost as the number of processes increases. 
+Problem_17: Each MPI process generates data intended for every other process. Implement the communication using MPI_Alltoall and analyze its communication cost as the number of processes increases.
 Sample Input
 Number of processes: 4
 P0: 0 1 2 3
@@ -28,15 +28,16 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    if(size != 4) {
-        if(rank == 0)
+    if (size != 4)
+    {
+        if (rank == 0)
             printf("Run with 4 processes\n");
         MPI_Finalize();
         return 0;
     }
 
-    for(int i=0; i<4; i++)
-        send[i] = rank*10 + i;
+    for (int i = 0; i < 4; i++)
+        send[i] = rank * 10 + i;
 
     MPI_Barrier(MPI_COMM_WORLD);
     t1 = MPI_Wtime();
@@ -48,11 +49,11 @@ int main(int argc, char *argv[])
     t2 = MPI_Wtime();
 
     printf("P%d received: ", rank);
-    for(int i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
         printf("%d ", recv[i]);
 
     printf("\nP%d communication time = %f s\n",
-           rank, t2-t1);
+           rank, t2 - t1);
 
     MPI_Finalize();
     return 0;
